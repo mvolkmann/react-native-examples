@@ -18,40 +18,39 @@ import {
 
 class MyScene extends Component { // eslint-disable-line no-unused-vars
   static propTypes = {
+    count: PropTypes.number.isRequired,
     navigator: PropTypes.object.isRequired,
+    title: PropTypes.string.isRequired
   }
 
   constructor() {
     super();
-    this.forward = this.forward.bind(this);
-    this.back = this.back.bind(this);
   }
 
-  forward() {
-    const nextCount = this.props.count + 1;
-    const route = {title: 'Route ' + nextCount, count: nextCount};
-    this.props.navigator.push(route);
-  }
-
-  back() {
-    this.props.navigator.pop();
+  getDay() {
+    return [
+      'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+      'Thursday', 'Friday', 'Saturday'][this.props.count];
   }
 
   render() {
-    console.log('index.ios.js render: this.props =', this.props);
-    const backBtn = this.props.count === 1 ? null :
-      <TouchableHighlight onPress={this.back}>
-        <Text>Back</Text>
-      </TouchableHighlight>;
     return (
-      <View style={styles.wrapper}>
-        <Text style={styles.welcome}>{this.props.title}</Text>
-        <Text>count = {this.props.count}</Text>
-        <TouchableHighlight onPress={this.forward}>
-          <Text>Forward</Text>
-        </TouchableHighlight>
-        {backBtn}
+      <View style={styles.scene}>
+        <Text>{this.getDay()}</Text>
       </View>
+    );
+  }
+}
+
+class NavButton extends Component { // eslint-disable-line no-unused-vars
+  render() {
+    return (
+      <TouchableHighlight
+        style={styles.button}
+        underlayColor="#B5B5B5"
+        onPress={this.props.onPress}>
+        <Text style={styles.buttonText}>{this.props.text}</Text>
+      </TouchableHighlight>
     );
   }
 }
@@ -64,28 +63,64 @@ class NavigatorDemo extends Component {
   }
 
   render() {
-    const route = {title: 'Initial Route', count: 1};
+    const route = {title: 'Initial Route', count: 0};
+
+    const navBar =
+      <Navigator.NavigationBar
+        routeMapper={{
+          LeftButton(route, navigator, index, navState) {
+            return index === 0 ? null :
+              <NavButton text="Back"
+                onPress={() => navigator.pop()}/>;
+          },
+          RightButton(route, navigator, index, navState) {
+            return <NavButton text="Forward"
+              onPress={() => {
+                const route = {title: 'Route ' + (index + 1), count: index + 1};
+                navigator.push(route);
+              }}/>;
+          },
+          Title(route /*, navigator, index, navState*/) {
+            return <Text style={styles.title}>{route.title}</Text>;
+          },
+        }}
+        style={{backgroundColor: 'gray'}}
+      />;
 
     return <Navigator
       style={styles.container}
+      navigationBar={navBar}
       initialRoute={route}
-      renderScene={this.renderScene}/>;
+      renderScene={this.renderScene}
+    />;
   }
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: 'white',
+    borderBottomColor: '#CDCDCD',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    padding: 15
+  },
+  buttonText: {
+    fontSize: 17,
+    fontWeight: '500',
+  },
   container: {
     flex: 1
   },
-  welcome: {
+  scene: {
+    //alignItems: 'center',
+    backgroundColor: '#EAEAEA',
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 50
+  },
+  title: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10
-  },
-  wrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 80
   }
 });
 
