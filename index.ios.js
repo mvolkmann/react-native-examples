@@ -14,6 +14,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 /* eslint-enable no-unused-vars */
 
 class MyScene extends Component { // eslint-disable-line no-unused-vars
@@ -44,12 +45,30 @@ class MyScene extends Component { // eslint-disable-line no-unused-vars
 
 class NavButton extends Component { // eslint-disable-line no-unused-vars
   render() {
+    const {leftIcon, rightIcon} = this.props;
+    const iconColor = 'blue';
+    const iconSize = 30;
+    const iconStyle = {lineHeight: 24};
+
+    const leftIconEl = leftIcon ?
+      <Icon style={iconStyle} name={leftIcon}
+        size={iconSize} color={iconColor}/> :
+      null;
+    const rightIconEl = rightIcon ?
+      <Icon style={iconStyle} name={rightIcon}
+        size={iconSize} color={iconColor}/> :
+      null;
+
     return (
       <TouchableHighlight
         style={styles.button}
         underlayColor="#B5B5B5"
         onPress={this.props.onPress}>
-        <Text style={styles.buttonText}>{this.props.text}</Text>
+        <View style={styles.navBtnView}>
+          {leftIconEl}
+          <Text style={styles.buttonText}> {this.props.text} </Text>
+          {rightIconEl}
+        </View>
       </TouchableHighlight>
     );
   }
@@ -68,13 +87,16 @@ class NavigatorDemo extends Component {
     const navBar =
       <Navigator.NavigationBar
         routeMapper={{
-          LeftButton(route, navigator, index, navState) {
-            return index === 0 ? null :
-              <NavButton text="Back"
-                onPress={() => navigator.pop()}/>;
+          LeftButton(route, navigator, index/*, navState*/) {
+            if (index === 0) return null;
+
+            const btnText = navigator.state.routeStack[index - 1].title;
+            return <NavButton style="styles.backBtn"
+              leftIcon="angle-left" text={btnText}
+              onPress={() => navigator.pop()}/>;
           },
-          RightButton(route, navigator, index, navState) {
-            return <NavButton text="Forward"
+          RightButton(route, navigator, index/*, navState*/) {
+            return <NavButton rightIcon="angle-right" text="Forward"
               onPress={() => {
                 const route = {title: 'Route ' + (index + 1), count: index + 1};
                 navigator.push(route);
@@ -97,6 +119,10 @@ class NavigatorDemo extends Component {
 }
 
 const styles = StyleSheet.create({
+  backBtn: {
+    fontSize: 36,
+    fontWeight: 'bold'
+  },
   button: {
     backgroundColor: 'white',
     borderBottomColor: '#CDCDCD',
@@ -105,10 +131,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 17,
-    fontWeight: '500',
+    fontWeight: 'bold'
   },
   container: {
     flex: 1
+  },
+  navBtnView: {
+    flexDirection: 'row'
   },
   scene: {
     //alignItems: 'center',
