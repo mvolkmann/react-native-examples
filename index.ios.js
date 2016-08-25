@@ -91,12 +91,13 @@ class NavigatorDemo extends Component {
             if (index === 0) return null;
 
             const btnText = navigator.state.routeStack[index - 1].title;
-            return <NavButton style="styles.backBtn"
+            return <NavButton
               leftIcon="angle-left" text={btnText}
               onPress={() => navigator.pop()}/>;
           },
           RightButton(route, navigator, index/*, navState*/) {
-            return <NavButton rightIcon="angle-right" text="Forward"
+            return <NavButton
+              text="Forward" rightIcon="angle-right"
               onPress={() => {
                 const route = {title: 'Route ' + (index + 1), count: index + 1};
                 navigator.push(route);
@@ -119,10 +120,6 @@ class NavigatorDemo extends Component {
 }
 
 const styles = StyleSheet.create({
-  backBtn: {
-    fontSize: 36,
-    fontWeight: 'bold'
-  },
   button: {
     backgroundColor: 'white',
     borderBottomColor: '#CDCDCD',
