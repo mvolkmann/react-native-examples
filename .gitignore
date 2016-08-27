@@ -1,6 +1,7 @@
+*/android/app/build
 ios/build
-node_modules
 ios/*.xcodeproj/*
+node_modules
 .DS_Store
 .swp
 .*.swp
