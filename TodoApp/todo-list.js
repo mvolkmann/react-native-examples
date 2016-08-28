@@ -30,7 +30,6 @@ class TodoList extends React.Component {
     // Pre-bind event handling methods.
     this.onArchiveCompleted = this.onArchiveCompleted.bind(this);
     this.onAddTodo = this.onAddTodo.bind(this);
-    //this.onKeyPress = this.onKeyPress.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
 
     //ASW.clear();
@@ -44,7 +43,7 @@ class TodoList extends React.Component {
       0);
   }
 
-  async loadTodos() { // from AsyncStorage.
+  async loadTodos() { // from AsyncStorage
     const promises = [];
     this.lastId = 0;
 
@@ -119,13 +118,6 @@ class TodoList extends React.Component {
       () => ASW.remove(getTodoKey(deleteId)));
   }
 
-  /*
-  onKeyPress(event) {
-    const {key} = event.nativeEvent;
-    if (key === 'Enter') this.onAddTodo();
-  }
-  */
-
   onTextChange(todoText) { // not passed an event object!
     this.setState({todoText});
   }
@@ -168,9 +160,6 @@ class TodoList extends React.Component {
             </View>
 
             <View style={styles.addRow}>
-              {/*
-              onKeyPress={this.onKeyPress}
-              */}
               <TextInput ref="todoInput"
                 style={styles.todoInput}
                 autoFocus
@@ -207,9 +196,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     flex: 1,
     resizeMode: 'cover',
-    height: null, // critical!
+    height: null, // why?
     padding: space,
-    width: null // critical!
+    width: null // why?
   },
   container: {
     alignItems: 'center',
