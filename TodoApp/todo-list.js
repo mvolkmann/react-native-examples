@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 import ASW from './asw.js';
 
@@ -12,7 +10,6 @@ import {
   View
 } from 'react-native';
 import TodoButton from './todo-button';
-
 import Todo from './todo';
 
 const TODO_KEY_PREFIX = 'todo-';
@@ -32,7 +29,7 @@ class TodoList extends React.Component {
     this.onAddTodo = this.onAddTodo.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
 
-    //ASW.clear();
+    //TODO: Don't allow adding any new todos until this completes.
     this.loadTodos();
   }
 
@@ -49,7 +46,6 @@ class TodoList extends React.Component {
 
     try {
       const keys = await ASW.getAllKeys();
-      console.log('todo-list.js loadTodos: keys =', keys);
       for (const key of keys) {
         if (key.startsWith(TODO_KEY_PREFIX)) {
           promises.push(ASW.get(key));
@@ -63,6 +59,7 @@ class TodoList extends React.Component {
         todos[id] = todo;
         this.lastId = Math.max(this.lastId, id);
       }
+
       this.setState({todos});
     } catch (e) {
       console.error('loadTodos promise error:', e);
@@ -77,17 +74,16 @@ class TodoList extends React.Component {
         todoText: '',
         todos: {...this.state.todos, [todo.id]: todo}
       },
-      () => ASW.set(getTodoKey(todo.id), todo));
-    /* Why doesn't this work instead of using setTime>
-    }, () => {
-      this.refs.todoInput.focus();
-    });
-    */
+      () => {
+        ASW.set(getTodoKey(todo.id), todo);
+        //TODO: Why doesn't this work instead of using setTimeout?
+        //this.refs.todoInput.focus();
+      });
+    //TODO: Why did this stop working?
     setTimeout(() => this.refs.todoInput.focus());
   }
 
   onArchiveCompleted() {
-    console.log('todo-list.js onArchiveCompleted: entered');
     const {todos} = this.state;
     const archiveIds = [];
     const newTodos = {};
@@ -100,7 +96,6 @@ class TodoList extends React.Component {
         newTodos[id] = todos[id];
       }
     });
-    console.log('todo-list.js x: archiveIds =', archiveIds);
 
     this.setState(
       {todos: newTodos},
@@ -114,7 +109,8 @@ class TodoList extends React.Component {
       if (id !== deleteId) newTodos[id] = todos[id];
     });
 
-    this.setState({todos: newTodos},
+    this.setState(
+      {todos: newTodos},
       () => ASW.remove(getTodoKey(deleteId)));
   }
 
@@ -124,7 +120,7 @@ class TodoList extends React.Component {
 
   onToggleDone(todo) {
     const newTodo = {...todo, done: !todo.done};
-    const todos = {...this.state.todos, [newTodo.id]: newTodo};
+    const todos = {...this.state.todos, [todo.id]: newTodo};
     this.setState(
       {todos},
       () => ASW.set(getTodoKey(todo.id), newTodo));
@@ -132,6 +128,7 @@ class TodoList extends React.Component {
 
   render() {
     const {todos} = this.state;
+
     const todoElements = Object.keys(todos).map(id => {
       const todo = todos[id];
       return <Todo todo={todo}
@@ -142,9 +139,7 @@ class TodoList extends React.Component {
 
     return (
       <View style={styles.container}>
-        {/*<Image source={require('image!backdrop')}*/}
-        <Image source={require('./backdrop.jpg')}
-          style={styles.backdrop}>
+        <Image source={require('./backdrop.jpg')} style={styles.backdrop}>
           <View style={styles.header}>
             <Text style={styles.title}>Todo List</Text>
 

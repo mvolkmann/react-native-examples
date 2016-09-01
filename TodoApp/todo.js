@@ -36,14 +36,7 @@ const space = 10;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'lightgray',
-    borderColor: 'gray',
-    borderRadius: 4,
-    borderWidth: 1,
     marginLeft: space,
-    overflow: 'hidden', // hides background color outside rounded corners
-    paddingHorizontal: 9,
-    paddingVertical: 5
   },
   container: {
     flexDirection: 'row',
